@@ -1,9 +1,8 @@
 "use strict"
 
-function Player(name){
-    var self = this;
-    self.name = name;
-
+module.exports = name => {
+    let _name = name;
+    return{
+        name:_name
+    };
 }
-
-exports.Player = Player;

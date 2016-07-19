@@ -1,0 +1,28 @@
+<html ng-app="app">
+
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/factories/socketFactory.js"></script>
+    <script src="app/indexCtrl.js"></script>
+</head>
+
+<body ng-controller="indexCtrl as $ctrl">
+    <form>
+        <div>
+            <div ng-repeat="chat in $ctrl.chats">
+                {{ chat.message }}
+            </div>
+        </div>
+        <div>
+            <input type="text" ng-model="$ctrl.message">
+        </div>
+        <div>
+            <button ng-click="$ctrl.onSend()">Send</button>
+        </div>
+    </form>
+    
+</body>
+
+</html>
