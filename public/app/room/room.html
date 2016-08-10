@@ -1,0 +1,13 @@
+<form>
+    <div>
+        <div ng-repeat="chat in $ctrl.chats">
+            {{ chat.message }}
+        </div>
+    </div>
+    <div>
+        <input type="text" ng-model="$ctrl.message">
+    </div>
+    <div>
+        <button ng-click="$ctrl.onSend()">Send</button>
+    </div>
+</form>

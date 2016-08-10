@@ -3,10 +3,13 @@
 
     angular
         .module("app")
-        .controller("indexCtrl", controller);
+        .component("room", {
+            templateUrl: "./app/room/room.html",
+            controller: controller    
+        });
 
     function controller(socket){
-        const $ctrl = this;
+       const $ctrl = this;
         $ctrl.chats = [];
         $ctrl.message = "";
 
@@ -25,4 +28,5 @@
         })
     }
     controller.$inject = ["socket"];
+    
 })();
