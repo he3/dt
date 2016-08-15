@@ -9,15 +9,14 @@ const Room = require('./lib/room.js').Room;
 const path = require("path");
 const root = path.join(__dirname, "public");
 
-const rooms = {};
-rooms["1"] = new Room("1");
-rooms["2"] = new Room("2");
+// rooms["1"] = new Room("1");
+// rooms["2"] = new Room("2");
 
-rooms["1"].setGame("1", {});
-rooms["2"].setGame("2", {});
+// rooms["1"].setGame("1", {});
+// rooms["2"].setGame("2", {});
 
-rooms["1"].game.addPlayer("1", "Henry");
-rooms["1"].game.addPlayer("2", "Bob");
+// rooms["1"].game.addPlayer("1", "Henry");
+// rooms["1"].game.addPlayer("2", "Bob");
 
 
 
@@ -33,14 +32,22 @@ app.get("/", (req, res) => res.sendFile("index.html", {root: root}));
 server.listen(process.env.PORT || config.port);
 console.log(`server listening on port: ${process.env.PORT || config.port}`);
 
-
+const rooms = {};
 const sockets = [];
 io.sockets.on("connection", socket => {
     sockets.push(socket);
+    
+    socket.on("joinRoom", roomId => {
+        if(!rooms[roomId])
+            rooms[roomId] = new Room(roomId);
+        const room = rooms[roomId];
+        room.sockets.push(socket);
+        socket.room = room;
+    });
 
     socket.on("sendChat", data => {
         console.log("sendChat", data);
-        sockets.forEach(s => {
+        socket.room.sockets.forEach(s => {
             s.emit("receiveChat", {
                 name: "chat",
                 message: data.message
