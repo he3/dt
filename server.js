@@ -10,20 +10,6 @@ const path = require("path");
 const root = path.join(__dirname, "public");
 
 
-// rooms["1"] = new Room("1");
-// rooms["2"] = new Room("2");
-
-// rooms["1"].setGame("1", {});
-// rooms["2"].setGame("2", {});
-
-// rooms["1"].game.addPlayer("1", "Henry");
-// rooms["1"].game.addPlayer("2", "Bob");
-
-
-
-
-
-
 app.use(express.static("public"));
 app.use(express.static("node_modules/angular"));
 app.use(express.static("node_modules/angular-route"));
@@ -54,5 +40,15 @@ io.sockets.on("connection", socket => {
                 message: data.message
             })
         })
+    });
+    
+    socket.on("sendGame", data => {
+        console.log("sendGame", data);
+        const room = socket.room;
+        
+        if(data.command === "getState"){
+            
+        }
+        
     })
 });
