@@ -30,7 +30,7 @@
         socket.on("receiveChat", data => {
             console.log("receiveChat", data);
             $ctrl.chats.push(data);
-        })
+        });
     }
     controller.$inject = ["$routeParams", "socket"];
 
