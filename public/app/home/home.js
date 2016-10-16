@@ -12,10 +12,25 @@
         const $ctrl = this;
         $ctrl.name = "";
         $ctrl.room = "";
+        $ctrl.joiningRoom = "";
 
         $ctrl.onGotoRoom = () => {
-            $location.path(`/room/${$ctrl.room}`);
+            $ctrl.joiningRoom = "Joining room...";
+            socket.emit("joinRoom", {
+                name:$ctrl.name,
+                room:$ctrl.room
+            });
         };
+        socket.on("joinRoomResponse", ({success, reason}) => {
+           if(success){
+               $ctrl.joiningRoom = "Joined!";
+               $location.path(`/room/${$ctrl.room}`);
+           } else {
+               $ctrl.joiningRoom = reason;
+           }
+        });
+
+
 
         $ctrl.socketStatus = "Unknown";
 
