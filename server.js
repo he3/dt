@@ -19,35 +19,38 @@ app.get("/", (req, res) => res.sendFile("index.html", {root: root}));
 server.listen(process.env.PORT || config.port);
 console.log(`server listening on port: ${process.env.PORT || config.port}`);
 
+
+
+// -------------------------------------------------------------
+// Socket
+// -------------------------------------------------------------
+const rooms = {};
+const sockets = [];
+
+function getRoom(roomId){
+    if(!rooms[roomId])
+        rooms[roomId] = new Room(roomId);
+    return rooms[roomId];
+}
+
 function req(){
     throw new Error("Missing Parm");
 }
 
-const rooms = {};
-const sockets = [];
 io.sockets.on("connection", socket => {
     sockets.push(socket);
     
     socket.on("joinRoom", ({name = req(), room: roomId = req()}) => {
         socket.name = name;
-        if(!rooms[roomId])
-            rooms[roomId] = new Room(roomId);
-        const room = rooms[roomId];
-        room.sockets.push(socket);
-        socket.room = room;
-        console.log(`${name} joined room ${roomId}`);
-        
-        // TODO: Handle name already taken, room full
-        socket.emit("joinRoomResponse", {success: true, reason: null});
+        const room = getRoom(roomId);
+        socket.emit("joinRoomResponse", room.join(socket));
     });
 
     socket.on("sendChat", data => {
         console.log("sendChat", data);
-        socket.room.sockets.forEach(s => {
-            s.emit("receiveChat", {
-                name: "chat",
-                message: data.message
-            });
+        io.to(socket.room.id).emit("receiveChat", {
+            name: "chat",
+            message: data.message
         });
     });
     
