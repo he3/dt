@@ -8,14 +8,26 @@
             controller: controller
         });
 
-    function controller($location, socket) {
+    controller.$inject = ["$location", "$cookies", "socket"];
+    function controller($location, $cookies, socket) {
         const $ctrl = this;
-        $ctrl.name = "";
+        $ctrl.name = $cookies.get("user.name") || "";
         $ctrl.room = "";
-        $ctrl.joiningRoom = "";
+        $ctrl.statusMessage = "";
 
         $ctrl.onGotoRoom = () => {
-            $ctrl.joiningRoom = "Joining room...";
+            if($ctrl.name.length == 0){
+                $ctrl.statusMessage = "Name is required";
+                return;
+            }
+            
+            if($ctrl.room.length == 0){
+                $ctrl.statusMessage = "Room is required";
+                return;
+            }
+            
+            $ctrl.statusMessage = "Joining room...";
+            $cookies.set("user.name", $ctrl.name);
             socket.emit("joinRoom", {
                 name:$ctrl.name,
                 room:$ctrl.room
@@ -23,10 +35,10 @@
         };
         socket.on("joinRoomResponse", ({success, reason}) => {
            if(success){
-               $ctrl.joiningRoom = "Joined!";
+               $ctrl.statusMessage = "Joined!";
                $location.path(`/room/${$ctrl.room}`);
            } else {
-               $ctrl.joiningRoom = reason;
+               $ctrl.statusMessage = reason;
            }
         });
 
@@ -68,6 +80,5 @@
         });
 
     }
-    controller.$inject = ["$location", "socket"];
 
 })();
