@@ -54,13 +54,8 @@ io.sockets.on("connection", socket => {
         });
     });
     
-    socket.on("sendGame", data => {
-        console.log("sendGame", data);
-        const room = socket.room;
-        
-        if(data.command === "getState"){
-            
-        }
-        
+    socket.on("disconnect", () => {
+       rooms.forEach(r => r.removeSocket(socket));
+       sockets.splice(sockets.indexOf(socket), 1);
     });
 });
